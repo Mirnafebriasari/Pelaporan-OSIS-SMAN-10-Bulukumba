@@ -3,7 +3,7 @@ import sys
 import os
 from datetime import datetime
 
-def buat_laporan_osisi_dengan_foto(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(100, 500), jarak_foto=160):
+def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(100, 500), jarak_foto=160):
     """
     Fungsi untuk membuat laporan OSIS dalam bentuk PDF dengan beberapa gambar yang disisipkan.
     Jika pustaka reportlab belum terinstal, akan menginstalnya secara otomatis.
