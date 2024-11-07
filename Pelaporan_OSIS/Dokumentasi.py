@@ -1,8 +1,9 @@
 import subprocess
 import sys
+import os
 from datetime import datetime
 
-def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(100, 500), jarak_foto=160):
+def buat_laporan_osisi_dengan_foto(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(100, 500), jarak_foto=160):
     """
     Fungsi untuk membuat laporan OSIS dalam bentuk PDF dengan beberapa gambar yang disisipkan.
     Jika pustaka reportlab belum terinstal, akan menginstalnya secara otomatis.
@@ -14,6 +15,12 @@ def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(1
     :param posisi_foto: Posisi (x, y) untuk menempatkan foto pertama (default: (100, 500))
     :param jarak_foto: Jarak vertikal antar foto (default: 160)
     """
+    # Memastikan direktori untuk menyimpan file PDF ada
+    output_dir = os.path.dirname(nama_file)  # Direktori dari path nama_file
+    if output_dir and not os.path.exists(output_dir):
+        os.makedirs(output_dir)  # Membuat direktori jika belum ada
+        print(f"Direktori {output_dir} berhasil dibuat.")
+
     # Menginstal reportlab jika belum terinstal
     try:
         from reportlab.lib.pagesizes import letter
@@ -42,8 +49,12 @@ def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(1
     y_position = posisi_foto[1]  # Posisi y pertama untuk foto pertama
     for foto_path in daftar_foto:
         try:
-            c.drawImage(foto_path, posisi_foto[0], y_position, width=200, height=150)
-            y_position -= jarak_foto  # Menggeser posisi y untuk foto berikutnya
+            # Memastikan foto_path adalah string yang valid
+            if isinstance(foto_path, str):
+                c.drawImage(foto_path, posisi_foto[0], y_position, width=200, height=150)
+                y_position -= jarak_foto  # Menggeser posisi y untuk foto berikutnya
+            else:
+                print(f"Error: {foto_path} bukan path yang valid.")
         except Exception as e:
             print(f"Error saat menambahkan gambar {foto_path}: {e}")
 
@@ -53,5 +64,8 @@ def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(1
     c.drawString(100, 50, f"Disusun pada: {tanggal}")
 
     # Menyimpan PDF
-    c.save()
-    print(f"Laporan telah disimpan sebagai {nama_file}")
+    try:
+        c.save()
+        print(f"Laporan telah disimpan sebagai {nama_file}")
+    except Exception as e:
+        print(f"Terjadi kesalahan saat menyimpan PDF: {e}")
