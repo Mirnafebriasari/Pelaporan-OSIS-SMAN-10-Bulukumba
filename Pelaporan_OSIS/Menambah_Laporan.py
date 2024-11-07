@@ -141,23 +141,14 @@
 
 
 
-
-
-
-
 import os
 from datetime import datetime
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
 
-def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi, file_name="laporan_osis.pdf"):
+def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi, file_name="laporan_osis.txt"):
     """
-    Fungsi untuk membuat laporan kegiatan OSIS dalam format PDF dengan output berbentuk tabel saja.
+    Fungsi untuk membuat laporan kegiatan OSIS dalam format teks dengan output berbentuk tabel saja.
 
-    Fungsi ini akan membuat file PDF hanya berisi tabel yang mencakup detail kegiatan seperti deskripsi, peserta, tujuan, anggaran,
-    hasil, evaluasi, dan rekomendasi, serta tempat untuk tanda tangan di bagian bawah.
+    Fungsi ini akan membuat file teks yang mencakup detail kegiatan dalam format tabel.
 
     Args:
         kegiatan (str): Nama kegiatan OSIS yang dilaporkan.
@@ -168,7 +159,7 @@ def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, eval
         hasil (str): Hasil yang dicapai setelah kegiatan dilakukan.
         evaluasi (str): Evaluasi kegiatan yang dilakukan.
         rekomendasi (str): Rekomendasi untuk kegiatan di masa mendatang.
-        file_name (str): Nama file PDF yang akan disimpan (default: "laporan_osis.pdf").
+        file_name (str): Nama file teks yang akan disimpan (default: "laporan_osis.txt").
 
     Returns:
         None: Fungsi ini akan mencetak pesan yang menginformasikan lokasi file laporan yang berhasil dibuat.
@@ -181,55 +172,20 @@ def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, eval
     os.makedirs(folder_laporan, exist_ok=True)
 
     # Membuat nama file laporan berdasarkan kegiatan
-    file_laporan = os.path.join(folder_laporan, f"{today}_{kegiatan.replace(' ', '_')}.pdf")
+    file_laporan = os.path.join(folder_laporan, f"{today}_{kegiatan.replace(' ', '_')}.txt")
 
-    # Membuat dokumen PDF
-    doc = SimpleDocTemplate(file_laporan, pagesize=letter)
-    content = []
+    # Membuka file teks untuk menulis data
+    with open(file_laporan, 'w') as file:
+        file.write(f"Laporan Kegiatan OSIS\n")
+        file.write(f"=========================================\n")
+        file.write(f"Nama Kegiatan: {kegiatan}\n")
+        file.write(f"Deskripsi: {deskripsi}\n")
+        file.write(f"Peserta: {peserta}\n")
+        file.write(f"Tujuan: {tujuan}\n")
+        file.write(f"Anggaran: {anggaran}\n")
+        file.write(f"Hasil: {hasil}\n")
+        file.write(f"Evaluasi: {evaluasi}\n")
+        file.write(f"Rekomendasi: {rekomendasi}\n")
 
-    # Membuat tabel data laporan kegiatan
-    data = [
-        ["No", "Nama Kegiatan", "Deskripsi", "Peserta", "Tujuan", "Anggaran", "Hasil", "Evaluasi", "Rekomendasi"],
-        ["1", kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi]
-    ]
-
-    # Membuat tabel
-    table = Table(data)
-
-    # Menambahkan style pada tabel
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header tabel berwarna abu-abu
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Warna teks header putih
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Semua teks di dalam tabel diatur ke tengah
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Font header tabel tebal
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Menambahkan garis pada tabel
-        ('SIZE', (0, 0), (-1, -1), 10),  # Ukuran font di seluruh tabel
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Jarak bawah header
-        ('TOPPADDING', (0, 0), (-1, 0), 12),  # Jarak atas header
-    ]))
-
-    # Menambahkan tabel ke konten
-    content.append(table)
-
-    # Menambahkan Spacer agar ada jarak sebelum tanda tangan
-    content.append(Spacer(1, 24))
-
-    # Menambahkan tempat untuk tanda tangan
-    styles = getSampleStyleSheet()
-    normal_style = styles['Normal']
-
-    # Menambahkan keterangan tanda tangan
-    tanda_tangan = Paragraph("""
-    Diketahui oleh,<br/>
-    Ketua OSIS<br/><br/>
-    __________________________<br/>
-    Nama Ketua OSIS
-    """, normal_style)
-
-    # Menambahkan keterangan tanda tangan ke konten
-    content.append(tanda_tangan)
-
-    # Menyusun dan menyimpan PDF
-    doc.build(content)
     print(f"Laporan berhasil dibuat di {file_laporan}")
 
