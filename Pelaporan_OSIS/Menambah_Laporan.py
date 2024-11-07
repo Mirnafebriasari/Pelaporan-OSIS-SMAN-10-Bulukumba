@@ -152,7 +152,7 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
-def Menambah_Laporan_Tabel(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi, file_name="laporan_osis.pdf"):
+def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi, file_name="laporan_osis.pdf"):
     """
     Fungsi untuk membuat laporan kegiatan OSIS dalam format PDF dengan output berbentuk tabel saja.
 
