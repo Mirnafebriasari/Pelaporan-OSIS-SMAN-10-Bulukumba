@@ -2,6 +2,9 @@ import subprocess
 import sys
 import os
 from datetime import datetime
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
 
 def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(100, 500), jarak_foto=160):
     """
@@ -43,18 +46,23 @@ def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(1
 
     # Mengatur font untuk deskripsi
     c.setFont("Helvetica", 12)
-    c.drawString(100, 730, deskripsi)
-
+    # Menulis deskripsi dengan memecahnya menjadi beberapa baris jika diperlukan
+    deskripsi_lines = deskripsi.split("\n")
+    y_position = 730
+    for line in deskripsi_lines:
+        c.drawString(100, y_position, line)
+        y_position -= 14  # Menurunkan posisi y untuk baris berikutnya
+    
     # Menambahkan foto-foto dari daftar_foto
     y_position = posisi_foto[1]  # Posisi y pertama untuk foto pertama
     for foto_path in daftar_foto:
         try:
-            # Memastikan foto_path adalah string yang valid
-            if isinstance(foto_path, str):
+            # Memastikan foto_path adalah string yang valid dan file ada
+            if isinstance(foto_path, str) and os.path.exists(foto_path):
                 c.drawImage(foto_path, posisi_foto[0], y_position, width=200, height=150)
                 y_position -= jarak_foto  # Menggeser posisi y untuk foto berikutnya
             else:
-                print(f"Error: {foto_path} bukan path yang valid.")
+                print(f"Warning: {foto_path} bukan path yang valid atau file tidak ditemukan.")
         except Exception as e:
             print(f"Error saat menambahkan gambar {foto_path}: {e}")
 
@@ -69,3 +77,4 @@ def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(1
         print(f"Laporan telah disimpan sebagai {nama_file}")
     except Exception as e:
         print(f"Terjadi kesalahan saat menyimpan PDF: {e}")
+
