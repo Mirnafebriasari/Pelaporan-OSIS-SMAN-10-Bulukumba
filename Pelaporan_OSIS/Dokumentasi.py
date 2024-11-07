@@ -55,10 +55,3 @@ def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(1
     # Menyimpan PDF
     c.save()
     print(f"Laporan telah disimpan sebagai {nama_file}")
-
-# Contoh penggunaan
-daftar_foto = ["foto1.jpg", "foto2.jpg", "foto3.jpg"]  # Ganti dengan daftar path foto yang sesuai
-buat_laporan_osisi_dengan_foto("laporan_osis_dengan_foto.pdf", 
-                               "Laporan Kegiatan OSIS Bulan Oktober", 
-                               "Laporan ini berisi dokumentasi kegiatan OSIS bulan Oktober, termasuk beberapa foto kegiatan.", 
-                               daftar_foto)
