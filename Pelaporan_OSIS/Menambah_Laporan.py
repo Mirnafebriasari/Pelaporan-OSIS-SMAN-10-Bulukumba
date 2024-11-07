@@ -141,29 +141,15 @@
 
 
 
+
 import os
 from datetime import datetime
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
 
-def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi, file_name="laporan_osis.txt"):
-    """
-    Fungsi untuk membuat laporan kegiatan OSIS dalam format teks dengan output berbentuk tabel saja.
-
-    Fungsi ini akan membuat file teks yang mencakup detail kegiatan dalam format tabel.
-
-    Args:
-        kegiatan (str): Nama kegiatan OSIS yang dilaporkan.
-        deskripsi (str): Deskripsi tentang kegiatan yang dilakukan.
-        peserta (str): Daftar peserta yang terlibat dalam kegiatan.
-        tujuan (str): Tujuan dari kegiatan yang dilaksanakan.
-        anggaran (str): Anggaran yang digunakan dalam kegiatan.
-        hasil (str): Hasil yang dicapai setelah kegiatan dilakukan.
-        evaluasi (str): Evaluasi kegiatan yang dilakukan.
-        rekomendasi (str): Rekomendasi untuk kegiatan di masa mendatang.
-        file_name (str): Nama file teks yang akan disimpan (default: "laporan_osis.txt").
-
-    Returns:
-        None: Fungsi ini akan mencetak pesan yang menginformasikan lokasi file laporan yang berhasil dibuat.
-    """
+def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi, file_name="laporan_osis.pdf"):
     # Mendapatkan tanggal saat ini untuk laporan
     today = datetime.today().strftime('%Y-%m-%d')
 
@@ -172,20 +158,98 @@ def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, eval
     os.makedirs(folder_laporan, exist_ok=True)
 
     # Membuat nama file laporan berdasarkan kegiatan
-    file_laporan = os.path.join(folder_laporan, f"{today}_{kegiatan.replace(' ', '_')}.txt")
+    file_laporan = os.path.join(folder_laporan, f"{today}_{kegiatan.replace(' ', '_')}.pdf")
 
-    # Membuka file teks untuk menulis data
-    with open(file_laporan, 'w') as file:
-        file.write(f"Laporan Kegiatan OSIS\n")
-        file.write(f"=========================================\n")
-        file.write(f"Nama Kegiatan: {kegiatan}\n")
-        file.write(f"Deskripsi: {deskripsi}\n")
-        file.write(f"Peserta: {peserta}\n")
-        file.write(f"Tujuan: {tujuan}\n")
-        file.write(f"Anggaran: {anggaran}\n")
-        file.write(f"Hasil: {hasil}\n")
-        file.write(f"Evaluasi: {evaluasi}\n")
-        file.write(f"Rekomendasi: {rekomendasi}\n")
+    # Membuat dokumen PDF
+    doc = SimpleDocTemplate(file_laporan, pagesize=letter)
+    content = []
 
+    # Menulis header laporan
+    styles = getSampleStyleSheet()
+    title_style = styles['Title']
+    heading_style = styles['Heading2']
+    normal_style = styles['Normal']
+    paragraph_style = styles['BodyText']
+
+    # Menambahkan judul laporan
+    title = Paragraph(f"<b>Laporan Kegiatan OSIS: {kegiatan}</b>", title_style)
+    content.append(title)
+
+    # Menambahkan tanggal laporan
+    content.append(Spacer(1, 12))
+    content.append(Paragraph(f"**Tanggal Kegiatan:** {today}", normal_style))
+
+    # Menambahkan deskripsi kegiatan
+    content.append(Spacer(1, 12))
+    content.append(Paragraph(f"<b>Deskripsi Kegiatan</b>", heading_style))  # Judul tanpa ##
+    content.append(Spacer(1, 6))
+    content.append(Paragraph(deskripsi, paragraph_style))
+
+    # Menambahkan peserta kegiatan
+    content.append(Spacer(1, 12))
+    content.append(Paragraph(f"<b>Peserta Kegiatan</b>", heading_style))  # Judul tanpa ##
+    content.append(Spacer(1, 6))
+    content.append(Paragraph(peserta, paragraph_style))
+
+    # Menambahkan tujuan kegiatan
+    content.append(Spacer(1, 12))
+    content.append(Paragraph(f"<b>Tujuan Kegiatan</b>", heading_style))  # Judul tanpa ##
+    content.append(Spacer(1, 6))
+    content.append(Paragraph(tujuan, paragraph_style))
+
+    # Menambahkan anggaran
+    content.append(Spacer(1, 12))
+    content.append(Paragraph(f"<b>Anggaran dan Pembiayaan</b>", heading_style))  # Judul tanpa ##
+    content.append(Spacer(1, 6))
+    content.append(Paragraph(anggaran, paragraph_style))
+
+    # Menambahkan hasil kegiatan
+    content.append(Spacer(1, 12))
+    content.append(Paragraph(f"<b>Hasil Kegiatan</b>", heading_style))  # Judul tanpa ##
+    content.append(Spacer(1, 6))
+    content.append(Paragraph(hasil, paragraph_style))
+
+    # Menambahkan evaluasi kegiatan
+    content.append(Spacer(1, 12))
+    content.append(Paragraph(f"<b>Evaluasi</b>", heading_style))  # Judul tanpa ##
+    content.append(Spacer(1, 6))
+    content.append(Paragraph(evaluasi, paragraph_style))
+
+    # Menambahkan rekomendasi
+    content.append(Spacer(1, 12))
+    content.append(Paragraph(f"<b>Rekomendasi</b>", heading_style))  # Judul tanpa ##
+    content.append(Spacer(1, 6))
+    content.append(Paragraph(rekomendasi, paragraph_style))
+
+    # Menambahkan tabel kegiatan
+    content.append(Spacer(1, 12))
+    table_data = [
+        ["No", "Nama Kegiatan", "Tanggal", "Lokasi", "Deskripsi"],
+        ["1", kegiatan, today, "Lokasi Kegiatan", deskripsi],  # Contoh data kegiatan
+    ]
+    table = Table(table_data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('SIZE', (0, 0), (-1, -1), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
+    ]))
+    content.append(table)
+
+    # Menambahkan tempat untuk tanda tangan
+    content.append(Spacer(1, 24))
+    tanda_tangan = Paragraph("""
+    Diketahui oleh,<br/>
+    Ketua OSIS<br/><br/>
+    __________________________<br/>
+    Nama Ketua OSIS
+    """, normal_style)
+    content.append(tanda_tangan)
+
+    # Menyusun dan menyimpan PDF
+    doc.build(content)
     print(f"Laporan berhasil dibuat di {file_laporan}")
-
