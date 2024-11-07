@@ -145,21 +145,19 @@
 
 
 
-
-
 import os
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
-def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi, file_name="laporan_osis.pdf"):
+def Menambah_Laporan_Tabel(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi, file_name="laporan_osis.pdf"):
     """
-    Fungsi untuk membuat laporan kegiatan OSIS dalam format PDF.
+    Fungsi untuk membuat laporan kegiatan OSIS dalam format PDF dengan output berbentuk tabel saja.
 
-    Fungsi ini akan membuat file PDF dengan detail kegiatan seperti deskripsi, peserta, tujuan, anggaran, 
-    hasil, evaluasi, dan rekomendasi.
+    Fungsi ini akan membuat file PDF hanya berisi tabel yang mencakup detail kegiatan seperti deskripsi, peserta, tujuan, anggaran,
+    hasil, evaluasi, dan rekomendasi, serta tempat untuk tanda tangan di bagian bawah.
 
     Args:
         kegiatan (str): Nama kegiatan OSIS yang dilaporkan.
@@ -189,87 +187,49 @@ def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, eval
     doc = SimpleDocTemplate(file_laporan, pagesize=letter)
     content = []
 
-    # Menulis header laporan
-    styles = getSampleStyleSheet()
-    title_style = styles['Title']
-    heading_style = styles['Heading2']
-    normal_style = styles['Normal']
-    
-    # Menambahkan judul laporan
-    title = Paragraph(f"<b>Laporan Kegiatan OSIS: {kegiatan}</b>", title_style)
-    content.append(title)
-
-    # Menambahkan tanggal laporan
-    content.append(Spacer(1, 12))
-    content.append(Paragraph(f"**Tanggal Kegiatan:** {today}", normal_style))
-
-    # Menambahkan deskripsi kegiatan
-    content.append(Spacer(1, 12))
-    content.append(Paragraph(f"## Deskripsi Kegiatan", heading_style))
-    content.append(Paragraph(deskripsi, normal_style))
-
-    # Menambahkan peserta kegiatan
-    content.append(Spacer(1, 12))
-    content.append(Paragraph(f"## Peserta Kegiatan", heading_style))
-    content.append(Paragraph(peserta, normal_style))
-
-    # Menambahkan tujuan kegiatan
-    content.append(Spacer(1, 12))
-    content.append(Paragraph(f"## Tujuan Kegiatan", heading_style))
-    content.append(Paragraph(tujuan, normal_style))
-
-    # Menambahkan anggaran
-    content.append(Spacer(1, 12))
-    content.append(Paragraph(f"## Anggaran dan Pembiayaan", heading_style))
-    content.append(Paragraph(anggaran, normal_style))
-
-    # Menambahkan hasil kegiatan
-    content.append(Spacer(1, 12))
-    content.append(Paragraph(f"## Hasil Kegiatan", heading_style))
-    content.append(Paragraph(hasil, normal_style))
-
-    # Menambahkan evaluasi kegiatan
-    content.append(Spacer(1, 12))
-    content.append(Paragraph(f"## Evaluasi", heading_style))
-    content.append(Paragraph(evaluasi, normal_style))
-
-    # Menambahkan rekomendasi
-    content.append(Spacer(1, 12))
-    content.append(Paragraph(f"## Rekomendasi", heading_style))
-    content.append(Paragraph(rekomendasi, normal_style))
-
-    # Menambahkan tabel kegiatan
-    content.append(Spacer(1, 12))
+    # Membuat tabel data laporan kegiatan
     data = [
-        ["No", "Nama Kegiatan", "Tanggal", "Lokasi", "Deskripsi"],
-        ["1", kegiatan, today, "Lokasi Kegiatan", deskripsi],  # Contoh data kegiatan
+        ["No", "Nama Kegiatan", "Deskripsi", "Peserta", "Tujuan", "Anggaran", "Hasil", "Evaluasi", "Rekomendasi"],
+        ["1", kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, evaluasi, rekomendasi]
     ]
+
+    # Membuat tabel
     table = Table(data)
+
+    # Menambahkan style pada tabel
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('SIZE', (0, 0), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header tabel berwarna abu-abu
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Warna teks header putih
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Semua teks di dalam tabel diatur ke tengah
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Font header tabel tebal
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Menambahkan garis pada tabel
+        ('SIZE', (0, 0), (-1, -1), 10),  # Ukuran font di seluruh tabel
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Jarak bawah header
+        ('TOPPADDING', (0, 0), (-1, 0), 12),  # Jarak atas header
     ]))
+
+    # Menambahkan tabel ke konten
     content.append(table)
 
-    # Menambahkan tanda tangan
-    content.append(Spacer(1, 12))
+    # Menambahkan Spacer agar ada jarak sebelum tanda tangan
+    content.append(Spacer(1, 24))
+
+    # Menambahkan tempat untuk tanda tangan
+    styles = getSampleStyleSheet()
+    normal_style = styles['Normal']
+
+    # Menambahkan keterangan tanda tangan
     tanda_tangan = Paragraph("""
     Diketahui oleh,<br/>
     Ketua OSIS<br/><br/>
     __________________________<br/>
     Nama Ketua OSIS
     """, normal_style)
+
+    # Menambahkan keterangan tanda tangan ke konten
     content.append(tanda_tangan)
 
     # Menyusun dan menyimpan PDF
     doc.build(content)
     print(f"Laporan berhasil dibuat di {file_laporan}")
-
-
 
