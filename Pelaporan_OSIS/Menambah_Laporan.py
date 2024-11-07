@@ -227,17 +227,24 @@ def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, eval
         ["No", "Nama Kegiatan", "Tanggal", "Lokasi", "Deskripsi"],
         ["1", kegiatan, today, "Lokasi Kegiatan", deskripsi],  # Contoh data kegiatan
     ]
-    table = Table(table_data)
+    
+    # Membuat tabel dengan pengaturan kolom yang lebih lebar
+    table = Table(table_data, colWidths=[1 * inch, 2 * inch, 1.5 * inch, 2 * inch, 3 * inch])  # Menyesuaikan lebar kolom
+
+    # Styling tabel untuk memastikan teks terlihat dengan baik
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-        ('SIZE', (0, 0), (-1, -1), 9),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header background
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Header text color
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alignment tengah
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Font header
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),  # Border grid untuk tabel
+        ('SIZE', (0, 0), (-1, -1), 9),  # Ukuran font tabel
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Padding bawah pada header
+        ('TOPPADDING', (0, 0), (-1, 0), 12),  # Padding atas pada header
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),  # Padding kiri
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),  # Padding kanan
     ]))
+    
     content.append(table)
 
     # Menambahkan tempat untuk tanda tangan
@@ -253,3 +260,4 @@ def Menambah_Laporan(kegiatan, deskripsi, peserta, tujuan, anggaran, hasil, eval
     # Menyusun dan menyimpan PDF
     doc.build(content)
     print(f"Laporan berhasil dibuat di {file_laporan}")
+
