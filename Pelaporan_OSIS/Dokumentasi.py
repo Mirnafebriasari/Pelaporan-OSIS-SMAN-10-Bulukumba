@@ -2,16 +2,17 @@ import subprocess
 import sys
 from datetime import datetime
 
-def Dokumentasi(nama_file, judul_laporan, deskripsi, foto_path, posisi_foto=(100, 500)):
+def Dokumentasi(nama_file, judul_laporan, deskripsi, daftar_foto, posisi_foto=(100, 500), jarak_foto=160):
     """
-    Fungsi untuk membuat laporan OSIS dalam bentuk PDF dengan gambar yang disisipkan.
+    Fungsi untuk membuat laporan OSIS dalam bentuk PDF dengan beberapa gambar yang disisipkan.
     Jika pustaka reportlab belum terinstal, akan menginstalnya secara otomatis.
 
     :param nama_file: Nama file PDF output (misal: 'laporan_osis.pdf')
     :param judul_laporan: Judul laporan OSIS
     :param deskripsi: Deskripsi atau teks laporan
-    :param foto_path: Path ke file foto yang akan disisipkan
-    :param posisi_foto: Posisi (x, y) untuk menempatkan foto pada halaman
+    :param daftar_foto: List of paths ke file foto yang akan disisipkan (contoh: ['foto1.jpg', 'foto2.jpg'])
+    :param posisi_foto: Posisi (x, y) untuk menempatkan foto pertama (default: (100, 500))
+    :param jarak_foto: Jarak vertikal antar foto (default: 160)
     """
     # Menginstal reportlab jika belum terinstal
     try:
@@ -37,11 +38,14 @@ def Dokumentasi(nama_file, judul_laporan, deskripsi, foto_path, posisi_foto=(100
     c.setFont("Helvetica", 12)
     c.drawString(100, 730, deskripsi)
 
-    # Menambahkan gambar (foto)
-    try:
-        c.drawImage(foto_path, posisi_foto[0], posisi_foto[1], width=200, height=150)
-    except Exception as e:
-        print(f"Error saat menambahkan gambar: {e}")
+    # Menambahkan foto-foto dari daftar_foto
+    y_position = posisi_foto[1]  # Posisi y pertama untuk foto pertama
+    for foto_path in daftar_foto:
+        try:
+            c.drawImage(foto_path, posisi_foto[0], y_position, width=200, height=150)
+            y_position -= jarak_foto  # Menggeser posisi y untuk foto berikutnya
+        except Exception as e:
+            print(f"Error saat menambahkan gambar {foto_path}: {e}")
 
     # Menambahkan tanggal pembuatan laporan
     tanggal = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
@@ -51,3 +55,10 @@ def Dokumentasi(nama_file, judul_laporan, deskripsi, foto_path, posisi_foto=(100
     # Menyimpan PDF
     c.save()
     print(f"Laporan telah disimpan sebagai {nama_file}")
+
+# Contoh penggunaan
+daftar_foto = ["foto1.jpg", "foto2.jpg", "foto3.jpg"]  # Ganti dengan daftar path foto yang sesuai
+buat_laporan_osisi_dengan_foto("laporan_osis_dengan_foto.pdf", 
+                               "Laporan Kegiatan OSIS Bulan Oktober", 
+                               "Laporan ini berisi dokumentasi kegiatan OSIS bulan Oktober, termasuk beberapa foto kegiatan.", 
+                               daftar_foto)
